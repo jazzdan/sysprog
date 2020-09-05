@@ -18,8 +18,9 @@ pub fn main() !void {
         }
 
         for (line) |c| {
-            // TODO(dmiller): Maybe I can tell the string format to print this as a char instead of ASCII code point??
-            try stdout.print("{}\n", .{c});
+            // TODO(dmiller): is there a better way to convert this to a string
+            var s = [1]u8{c};
+            try stdout.print("{}\n", .{s});
         }
     }
 }

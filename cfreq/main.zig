@@ -38,6 +38,6 @@ pub fn main() !void {
     sort.sort(Map.Entry, items, {}, entryLessThan);
 
     for (items) |entry| {
-        try stdout.print("Letter: {}, Count: {}\n", .{ entry.key, entry.value });
+        try stdout.print("'{c}' {d}\n", .{ entry.key, entry.value });
     }
 }

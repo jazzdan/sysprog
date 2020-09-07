@@ -2,6 +2,13 @@ const std = @import("std");
 
 const io = std.io;
 const os = std.os;
+const sort = std.sort;
+
+const Map = std.AutoHashMap(u8, u64);
+
+fn entryLessThan(context: void, lhs: Map.Entry, rhs: Map.Entry) bool {
+    return lhs.value > rhs.value;
+}
 
 pub fn main() !void {
     const a = std.heap.page_allocator;
@@ -9,7 +16,6 @@ pub fn main() !void {
     const stream = &std.io.getStdIn().inStream();
 
     var buf: [1024]u8 = undefined;
-    const Map = std.AutoHashMap(u8, u64);
     var map = Map.init(a);
 
     while (try stream.readUntilDelimiterOrEof(&buf, '\n')) |line| {
@@ -27,7 +33,11 @@ pub fn main() !void {
         }
     }
 
-    for (map.items()) |entry| {
+    var items = map.items();
+
+    sort.sort(Map.Entry, items, {}, entryLessThan);
+
+    for (items) |entry| {
         try stdout.print("Letter: {}, Count: {}\n", .{ entry.key, entry.value });
     }
 }

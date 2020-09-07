@@ -18,9 +18,16 @@ pub fn main() !void {
         }
 
         for (line) |c| {
-            var entry = map.getOrPut(c);
-            entry = entry + 1;
-            // TODO store back in map
+            var gop = try map.getOrPut(c);
+            var count: u64 = 1;
+            if (gop.found_existing) {
+                count = gop.entry.value + 1;
+            }
+            try map.put(c, count);
         }
+    }
+
+    for (map.items()) |entry| {
+        try stdout.print("Letter: {}, Count: {}\n", .{ entry.key, entry.value });
     }
 }

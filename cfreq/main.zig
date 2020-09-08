@@ -18,12 +18,11 @@ pub fn main() !void {
     var buf: [1024]u8 = undefined;
     var map = Map.init(a);
 
-    while (try stream.readUntilDelimiterOrEof(&buf, '\n')) |line| {
-        if (line.len == 0) {
-            break;
-        }
-
-        for (line) |c| {
+    var size = try stream.readAll(&buf);
+    // loop until EOF hit
+    while (size > 0) : (size = (try stream.readAll(&buf))) {
+        var subSlice = buf[0..size];
+        for (subSlice) |c| {
             var gop = try map.getOrPut(c);
             var count: u64 = 1;
             if (gop.found_existing) {

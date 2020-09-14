@@ -16,9 +16,14 @@ pub fn main() !void {
 
     var index: usize = 0;
 
+    var word: []u8 = undefined;
+
+    // TODO(dmiller): this arg handling could probablyt be simplified
     while (args_it.next(a)) |arg_or_err| : (index += 1) {
         const arg = try arg_or_err;
-        try stdout.print("{}: {}\n", .{ index, arg });
+        try stdout.print("word is: {}\n", .{arg});
+        word = arg;
+        break;
     }
 
     var size = try stream.readAll(&buf);

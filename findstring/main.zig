@@ -9,6 +9,7 @@ pub fn main() !void {
     const stream = &std.io.getStdIn().inStream();
 
     var args_it = std.process.args();
+    // skip the first thing because it's just the name of the program
     _ = args_it.skip();
     var word: []u8 = undefined;
 
@@ -20,6 +21,8 @@ pub fn main() !void {
         word = arg;
         break;
     }
+
+    // TODO(dmiller): error handling
 
     var buf: [1024]u8 = undefined;
 
@@ -40,7 +43,7 @@ pub fn main() !void {
             if (c == nextCharToMatch) {
                 try stdout.print("Matches. Advancing to next character\n", .{});
                 nextIndexToMatch = nextIndexToMatch + 1;
-                if (nextIndexToMatch + 1 == word.len) {
+                if (nextIndexToMatch == word.len) {
                     try stdout.print("WE FOUND THE WORD\n", .{});
                     os.exit(0);
                 }

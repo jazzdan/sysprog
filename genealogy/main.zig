@@ -14,7 +14,7 @@ const Map = std.AutoHashMap([]u8, *Person);
 const stdin = std.io.getStdIn().inStream();
 const readUntil = stdin.readUntilDelimiterOrEof;
 
-fn handleField(fieldNum: u8, p: *const Person, field: []u8) void {
+fn handleField(fieldNum: u8, p: *Person, field: []u8) void {
     if (fieldNum == 1) {
         p.name = field;
     } else if (fieldNum == 2) {

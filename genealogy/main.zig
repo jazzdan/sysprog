@@ -85,4 +85,19 @@ pub fn main() !void {
             try map.put(p.name, p);
         }
     }
+
+    var args_it = std.process.args();
+
+    var target_person: []u8 = undefined;
+    // skip program name
+    _ = args_it.skip();
+    // TODO(dmiller): this arg handling could probably be simplified
+    // but for now just grab the first one
+    // TODO(dmiller): error handling
+    while (args_it.next(a)) |arg_or_err| {
+        const arg = try arg_or_err;
+        try stdout.print("target person is: {}\n", .{arg});
+        target_person = arg;
+        break;
+    }
 }

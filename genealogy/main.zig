@@ -62,15 +62,8 @@ pub fn main() !void {
         while (iterator.next()) |field| {
             try stdout.print("field {}\n", .{field});
             if (fieldNum == 0) {
-                var gop = try map.getOrPut(field);
-                if (gop.found_existing) {
-                    gop.entry.value.name = field;
-                } else {
-                    p.name = field;
-                    try map.put(field, p);
-                }
+                p.name = field;
             } else if (fieldNum == 1) {
-                // TODO(dmiller): insert in to hash map
                 p.father = a.create(Person) catch @panic("Out of memory");
                 p.father.* = Person{
                     .name = field,
@@ -78,7 +71,6 @@ pub fn main() !void {
                     .father = undefined,
                 };
             } else if (fieldNum == 2) {
-                // TODO(dmiller): insert in to hash map
                 p.mother = a.create(Person) catch @panic("Out of memory");
                 p.mother.* = Person{
                     .name = field,
@@ -87,6 +79,10 @@ pub fn main() !void {
                 };
             }
             fieldNum = fieldNum + 1;
+        }
+        var gop = try map.getOrPut(p.name);
+        if (!gop.found_existing) {
+            try map.put(p.name, p);
         }
     }
 }

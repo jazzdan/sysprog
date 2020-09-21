@@ -61,16 +61,16 @@ pub fn main() !void {
         var fieldNum: u8 = 0;
         while (iterator.next()) |field| {
             try stdout.print("field {}\n", .{field});
-            if (fieldNum == 0) {
+            if (fieldNum == 1) {
                 p.name = field;
-            } else if (fieldNum == 1) {
+            } else if (fieldNum == 2) {
                 p.father = a.create(Person) catch @panic("Out of memory");
                 p.father.* = Person{
                     .name = field,
                     .mother = undefined,
                     .father = undefined,
                 };
-            } else if (fieldNum == 2) {
+            } else if (fieldNum == 3) {
                 p.mother = a.create(Person) catch @panic("Out of memory");
                 p.mother.* = Person{
                     .name = field,
@@ -80,9 +80,12 @@ pub fn main() !void {
             }
             fieldNum = fieldNum + 1;
         }
+        try stdout.print("Putting {} in hashmap\n", .{p.name});
         var gop = try map.getOrPut(p.name);
         if (!gop.found_existing) {
             try map.put(p.name, p);
+        } else {
+            @panic("No duplicates allowed");
         }
     }
 
@@ -100,4 +103,7 @@ pub fn main() !void {
         target_person = arg;
         break;
     }
+
+    var result = map.get(target_person);
+    try stdout.print("result is: {}\n", .{result});
 }

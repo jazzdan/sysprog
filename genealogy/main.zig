@@ -62,8 +62,10 @@ pub fn main() !void {
         while (iterator.next()) |field| {
             try stdout.print("field {}\n", .{field});
             if (fieldNum == 1) {
+                std.debug.print("Setting name to {}\n", .{field});
                 p.name = field;
             } else if (fieldNum == 2) {
+                std.debug.print("Setting father to {}\n", .{field});
                 p.father = a.create(Person) catch @panic("Out of memory");
                 p.father.* = Person{
                     .name = field,
@@ -71,6 +73,7 @@ pub fn main() !void {
                     .father = undefined,
                 };
             } else if (fieldNum == 3) {
+                std.debug.print("Setting mother to {}\n", .{field});
                 p.mother = a.create(Person) catch @panic("Out of memory");
                 p.mother.* = Person{
                     .name = field,
@@ -79,14 +82,10 @@ pub fn main() !void {
                 };
             }
             fieldNum = fieldNum + 1;
+            std.debug.print("person is now {}\n", .{p.name});
         }
         try stdout.print("Putting {} in hashmap\n", .{p.name});
-        var gop = try map.getOrPut(p.name);
-        if (!gop.found_existing) {
-            try map.put(p.name, p);
-        } else {
-            @panic("No duplicates allowed");
-        }
+        try map.put(p.name, p);
     }
 
     var args_it = std.process.args();
@@ -104,6 +103,12 @@ pub fn main() !void {
         break;
     }
 
+
+    var map_it = map.iterator();
+
+    while (map_it.next()) |entry| {
+        std.debug.print("key {}\n", .{entry.key});
+    }
     var result = map.get(target_person);
     try stdout.print("result is: {}\n", .{result});
 }

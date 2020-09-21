@@ -9,15 +9,16 @@ const Person = struct {
     father: *Person,
 };
 
-const Map = std.AutoHashMap([]u8, *Person);
+const Map = std.AutoHashMap([]const u8, *Person);
 
 const stdin = std.io.getStdIn().inStream();
 const readUntil = stdin.readUntilDelimiterOrEof;
 
-fn handleField(a: *std.mem.Allocator, fieldNum: u8, p: *Person, field: []const u8) void {
-    if (fieldNum == 1) {
+fn handleField(a: *std.mem.Allocator, m: std.hash_map.AutoHashMap([]u8, *Person), fieldNum: u8, p: *Person, field: []const u8) void {
+    if (fieldNum == 0) {
+        m.put(field, p);
         p.name = field;
-    } else if (fieldNum == 2) {
+    } else if (fieldNum == 1) {
         // TODO(dmiller): insert in to hash map
         p.father = a.create(Person) catch @panic("Out of memory");
         p.father.* = Person{
@@ -25,9 +26,9 @@ fn handleField(a: *std.mem.Allocator, fieldNum: u8, p: *Person, field: []const u
             .mother = undefined,
             .father = undefined,
         };
-    } else if (fieldNum == 3) {
+    } else if (fieldNum == 2) {
         // TODO(dmiller): insert in to hash map
-        p.mother     = a.create(Person) catch @panic("Out of memory");
+        p.mother = a.create(Person) catch @panic("Out of memory");
         p.mother.* = Person{
             .name = field,
             .mother = undefined,
@@ -60,7 +61,31 @@ pub fn main() !void {
         var fieldNum: u8 = 0;
         while (iterator.next()) |field| {
             try stdout.print("field {}\n", .{field});
-            handleField(a, fieldNum, p, field);
+            if (fieldNum == 0) {
+                var gop = try map.getOrPut(field);
+                if (gop.found_existing) {
+                    gop.entry.value.name = field;
+                } else {
+                    p.name = field;
+                    try map.put(field, p);
+                }
+            } else if (fieldNum == 1) {
+                // TODO(dmiller): insert in to hash map
+                p.father = a.create(Person) catch @panic("Out of memory");
+                p.father.* = Person{
+                    .name = field,
+                    .mother = undefined,
+                    .father = undefined,
+                };
+            } else if (fieldNum == 2) {
+                // TODO(dmiller): insert in to hash map
+                p.mother = a.create(Person) catch @panic("Out of memory");
+                p.mother.* = Person{
+                    .name = field,
+                    .mother = undefined,
+                    .father = undefined,
+                };
+            }
             fieldNum = fieldNum + 1;
         }
     }

@@ -10,7 +10,6 @@ const Person = struct {
     father: *Person,
 };
 
-// TODO(dmiller): does this need to be a pointer to a Person?
 const HashToPerson = std.StringHashMap(*Person);
 
 const stdin = std.io.getStdIn().inStream();
@@ -37,6 +36,14 @@ fn handleField(a: *std.mem.Allocator, m: std.hash_map.AutoHashMap([]u8, *Person)
             .father = undefined,
         };
     }
+}
+
+fn put_person(a: *std.mem.Allocator, m: std.hash_map.StringHashMap(*Person), p: *Person) void {
+    const hash = try a.alloc(u8, 64);
+    var hasher = Blake3.init(.{});
+    hasher.update(p.name);
+    hasher.final(hash);
+    try map.put(hash, p);
 }
 
 pub fn main() !void {
@@ -69,6 +76,11 @@ pub fn main() !void {
                     .mother = undefined,
                     .father = undefined,
                 };
+                const hash = try a.alloc(u8, 64);
+                var hasher = Blake3.init(.{});
+                hasher.update(field);
+                hasher.final(hash);
+                try map.put(hash, p.father);
             } else if (fieldNum == 3) {
                 std.debug.print("Setting mother to {}\n", .{field});
                 p.mother = a.create(Person) catch @panic("Out of memory");
@@ -77,6 +89,11 @@ pub fn main() !void {
                     .mother = undefined,
                     .father = undefined,
                 };
+                const hash = try a.alloc(u8, 64);
+                var hasher = Blake3.init(.{});
+                hasher.update(field);
+                hasher.final(hash);
+                try map.put(hash, p.mother);
             }
             fieldNum = fieldNum + 1;
         }

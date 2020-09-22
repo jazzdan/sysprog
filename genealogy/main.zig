@@ -2,6 +2,7 @@ const std = @import("std");
 
 const io = std.io;
 const os = std.os;
+const Blake3 = std.crypto.hash.Blake3;
 
 const Person = struct {
     name: []const u8,
@@ -9,7 +10,8 @@ const Person = struct {
     father: *Person,
 };
 
-const Map = std.AutoHashMap([]const u8, *Person);
+// TODO(dmiller): does this need to be a pointer to a Person?
+const HashToPerson = std.StringHashMap(*Person);
 
 const stdin = std.io.getStdIn().inStream();
 const readUntil = stdin.readUntilDelimiterOrEof;
@@ -46,18 +48,13 @@ pub fn main() !void {
     // Otherwise attach to existing entry
 
     var buf: [1024]u8 = undefined;
-    var map = Map.init(a);
+    var map = HashToPerson.init(a);
 
     // loop until EOF hit
     while (try readUntil(&buf, '\n')) |line| {
         try stdout.print("line {}\n", .{line});
         var iterator = std.mem.split(line, ",");
-        var p = a.create(Person) catch @panic("Out of memory");
-        p.* = Person{
-            .name = undefined,
-            .mother = undefined,
-            .father = undefined,
-        };
+        var p: *Person = a.create(Person) catch @panic("Out of memory");
         var fieldNum: u8 = 0;
         while (iterator.next()) |field| {
             try stdout.print("field {}\n", .{field});
@@ -82,10 +79,14 @@ pub fn main() !void {
                 };
             }
             fieldNum = fieldNum + 1;
-            std.debug.print("person is now {}\n", .{p.name});
         }
+        std.debug.print("person is now {}\n", .{p.name});
         try stdout.print("Putting {} in hashmap\n", .{p.name});
-        try map.put(p.name, p);
+        const hash = try a.alloc(u8, 64);
+        var hasher = Blake3.init(.{});
+        hasher.update(p.name);
+        hasher.final(hash);
+        try map.put(hash, p);
     }
 
     var args_it = std.process.args();
@@ -103,12 +104,10 @@ pub fn main() !void {
         break;
     }
 
-
-    var map_it = map.iterator();
-
-    while (map_it.next()) |entry| {
-        std.debug.print("key {}\n", .{entry.key});
-    }
-    var result = map.get(target_person);
+    const hash = try a.alloc(u8, 64);
+    var hasher = Blake3.init(.{});
+    hasher.update(target_person);
+    hasher.final(hash);
+    var result = map.get(hash);
     try stdout.print("result is: {}\n", .{result});
 }

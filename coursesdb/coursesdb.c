@@ -90,6 +90,7 @@ struct Course *csv_to_course(char *line) {
   struct Course *c = malloc(sizeof(struct Course));
   c->id = atoi(getfield(line, 1));
   const char *title = getfield(line, 2);
+  // TODO this doesn't work either
   c->title = title;
   // TODO fix these things
   // c->year = atoi(getfield(line, 3));

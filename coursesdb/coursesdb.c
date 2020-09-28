@@ -6,14 +6,14 @@ const char *types[3];
 
 struct Course {
   int id;
-  const char *title[60];
+  char *title;
   int year;
   char semester;
 };
 
 struct Student {
   int id;
-  const char *name[30];
+  char *name;
   int enrollment_year;
 };
 
@@ -22,14 +22,32 @@ struct Enrollment {
   int course_id;
 };
 
-struct Course current_courses[100];
-struct Student current_students[100];
-struct Enrollment current_enrollment[100];
+int current_course_index = 0;
+struct Course *current_courses[1024];
+int current_student_index = 0;
+struct Student *current_students[1024];
+int current_enrollment_index = 0;
+struct Enrollment *current_enrollment[1024];
 
 int init_database() {
   types[0] = "courses";
   types[1] = "students";
   types[2] = "enrollment";
+
+  return 0;
+}
+
+int course_to_csv(struct Course *c, FILE *fh) {
+  return fprintf(fh, "%d,%s,%d,%c\n", c->id, c->title, c->year, c->semester);
+}
+
+int courses_to_csv(FILE *fh) {
+  for (int i = 0; i < current_course_index; i++) {
+    if (course_to_csv(current_courses[i], fh) < 0) {
+      printf("Failed to write to csv");
+      return 1;
+    }
+  }
 
   return 0;
 }
@@ -48,6 +66,12 @@ int save_tables(const char *prefix) {
       return 101;
     }
 
+    if (i == 0) {
+      if (courses_to_csv(file_handle) != 0) {
+        return 103;
+      }
+    }
+
     fclose(file_handle);
   }
   return 0;
@@ -60,6 +84,15 @@ const char *getfield(char *line, int num) {
     if (!--num) return tok;
   }
   return NULL;
+}
+
+struct Course csv_to_course(char *line) {
+  struct Course c;
+  c.id = atoi(getfield(line, 1));
+  strcpy(c.title, getfield(line, 2));
+  c.year = atoi(getfield(line, 3));
+  c.semester = getfield(line, 4)[0];  // TODO not sure if this is right
+  return c;
 }
 
 int load_tables(const char *prefix) {
@@ -80,7 +113,11 @@ int load_tables(const char *prefix) {
     char line[1024];
     while (fgets(line, 1024, file_handle)) {
       char *tmp = strdup(line);
-      printf("Field 0 would be %s\n", getfield(tmp, 1));
+      if (i == 0) {
+        struct Course c = csv_to_course(tmp);
+        current_courses[current_course_index] = &c;
+      }
+      printf("Field 1 would be %s\n", getfield(tmp, 1));
       // NOTE strtok clobbers tmp
       free(tmp);
     }

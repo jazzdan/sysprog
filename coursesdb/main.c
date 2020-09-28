@@ -19,10 +19,10 @@ int main() {
     printf("Successfully loaded tables\n");
   }
 
-  // if (save_tables("test") != 0) {
-  //   printf("Failed to save tables\n");
-  //   return EXIT_FAILURE;
-  // } else {
-  //   printf("Successfully saved tables\n");
-  // }
+  if (save_tables("test") != 0) {
+    printf("Failed to save tables\n");
+    return EXIT_FAILURE;
+  } else {
+    printf("Successfully saved tables\n");
+  }
 }

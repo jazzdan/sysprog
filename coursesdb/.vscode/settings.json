@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "coursesdb.h": "c"
+        "coursesdb.h": "c",
+        "__locale": "c"
     }
 }

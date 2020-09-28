@@ -12,10 +12,17 @@ int main() {
     printf("Successfully initialized database\n");
   }
 
-  if (save_tables("test") != 0) {
-    printf("Failed to save tables\n");
-    return EXIT_SUCCESS;
+  if (load_tables("test") != 0) {
+    printf("Failed to load tables\n");
+    return EXIT_FAILURE;
   } else {
-    printf("Successfully saved tables\n");
+    printf("Successfully loaded tables\n");
   }
+
+  // if (save_tables("test") != 0) {
+  //   printf("Failed to save tables\n");
+  //   return EXIT_FAILURE;
+  // } else {
+  //   printf("Successfully saved tables\n");
+  // }
 }

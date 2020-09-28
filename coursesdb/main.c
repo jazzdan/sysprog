@@ -1,8 +1,9 @@
 #include <stdio.h>
 
+#include "coursesdb.c"
 #include "coursesdb.h"
 
 int main() {
-  printf("Hello, World!");
-  return 0;
+  printf("Initializing database");
+  return init_database();
 }

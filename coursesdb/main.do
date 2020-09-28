@@ -1,6 +1,6 @@
 # If main.c changes, this script needs to be
 # re-run.
-redo-ifchange main.c
+redo-ifchange main.c coursesdb.c coursesdb.h
 
 # Compile hello.c into the 'hello' binary.
 #

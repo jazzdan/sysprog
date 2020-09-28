@@ -3,10 +3,10 @@ redo-ifchange all
 
 # Ensure that the hello program, when run, says
 # hello like we expect.
-if ./main| grep -i 'successfully initialized database' >/dev/null; then
+if ./main| grep -i 'successfully initialized database' && grep -i 'successfully saved tables' >/dev/null; then
     echo "success" >&2
     exit 0
 else
-    echo "missing 'hello' message!" >&2
+    echo "something broke" >&2
     exit 1
 fi

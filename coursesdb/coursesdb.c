@@ -3,6 +3,24 @@
 
 const char *types[3];
 
+struct Course {
+  int id;
+  const char *title[60];
+  int year;
+  char semester;
+};
+
+struct Student {
+  int id;
+  const char *name[30];
+  int enrollment_year;
+};
+
+struct Enrollment {
+  int student_id;
+  int course_id;
+};
+
 int init_database() {
   types[0] = "courses";
   types[1] = "students";

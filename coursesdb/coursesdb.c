@@ -86,12 +86,13 @@ const char *getfield(char *line, int num) {
   return NULL;
 }
 
-struct Course csv_to_course(char *line) {
-  struct Course c;
-  c.id = atoi(getfield(line, 1));
-  strcpy(c.title, getfield(line, 2));
-  c.year = atoi(getfield(line, 3));
-  c.semester = getfield(line, 4)[0];  // TODO not sure if this is right
+struct Course *csv_to_course(char *line) {
+  struct Course *c = malloc(sizeof(struct Course));
+  c->id = atoi(getfield(line, 1));
+  const char *title = getfield(line, 2);
+  strcpy(c->title, title);
+  c->year = atoi(getfield(line, 3));
+  c->semester = getfield(line, 4)[0];  // TODO not sure if this is right
   return c;
 }
 
@@ -114,8 +115,8 @@ int load_tables(const char *prefix) {
     while (fgets(line, 1024, file_handle)) {
       char *tmp = strdup(line);
       if (i == 0) {
-        struct Course c = csv_to_course(tmp);
-        current_courses[current_course_index] = &c;
+        struct Course *c = csv_to_course(tmp);
+        current_courses[current_course_index] = c;
       }
       printf("Field 1 would be %s\n", getfield(tmp, 1));
       // NOTE strtok clobbers tmp

@@ -13,4 +13,4 @@ redo-ifchange main.c coursesdb.c coursesdb.h
 # final location, only if this script completes
 # successfully.
 #
-zig cc -o $3 main.c -Wall
+gcc -o $3 main.c -Wall -g

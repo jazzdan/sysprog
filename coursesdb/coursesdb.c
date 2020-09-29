@@ -3,10 +3,13 @@
 #include <string.h>
 
 // TODO try running leaks
+// TODO soft delete
+// TODO write test for adding course + then saving
+// TODO write test for deleting course + then saving
+// TODO handle growing the number of students instead of just allocating 1024
 
 const char *types[3];
 
-// TODO soft delete
 struct Course {
   int id;
   const char *title;

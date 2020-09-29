@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+// TODO try running leaks
+
 const char *types[3];
 
+// TODO soft delete
 struct Course {
   int id;
   const char *title;
@@ -77,26 +80,27 @@ int save_tables(const char *prefix) {
   return 0;
 }
 
-// https://stackoverflow.com/questions/12911299/read-csv-file-in-c
-const char *getfield(char *line, int num) {
-  const char *tok;
-  for (tok = strtok(line, ","); tok && *tok; tok = strtok(NULL, ",\n")) {
-    if (!--num) return tok;
-  }
-  return NULL;
+char **parse(char *line, char *delim) {
+  // strip trailing newline
+  int len = strlen(line);
+  if (line[len - 1] == '\n') line[len - 1] = '\0';
+
+  char **ap;
+  static char *argv[4];
+  for (ap = argv; (*ap = strsep(&line, delim)) != NULL;)
+    if ((**ap != '\0') && (++ap >= &argv[4])) break;
+  return argv;
 }
 
 struct Course *csv_to_course(char *line) {
+  char **fields = parse(line, ",");
+
   struct Course *c = malloc(sizeof(struct Course));
-  c->id = atoi(getfield(line, 1));
-  const char *title = getfield(line, 2);
-  // TODO this doesn't work either
-  c->title = title;
-  // TODO fix these things
-  // c->year = atoi(getfield(line, 3));
-  c->year = 1920;
-  //   c->semester = getfield(line, 4)[0];
-  c->semester = 'f';
+  c->id = atoi(fields[0]);
+  c->title = fields[1];
+  c->year = atoi(fields[2]);
+  c->semester = fields[3][0];
+
   return c;
 }
 
@@ -123,8 +127,6 @@ int load_tables(const char *prefix) {
         current_courses[current_course_index] = c;
         current_course_index++;
       }
-      printf("Field 1 would be %s\n", getfield(tmp, 1));
-      // NOTE strtok clobbers tmp
       free(tmp);
     }
 

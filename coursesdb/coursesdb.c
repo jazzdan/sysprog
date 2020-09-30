@@ -11,7 +11,7 @@ const char *types[3];
 
 struct Course {
   int id;
-  const char *title;
+  char *title;
   int year;
   char semester;
 };
@@ -44,6 +44,14 @@ int init_database() {
 
 int course_to_csv(struct Course *c, FILE *fh) {
   return fprintf(fh, "%d,%s,%d,%c\n", c->id, c->title, c->year, c->semester);
+}
+
+void print_courses() {
+  printf("We think there are %d courses\n", current_course_index);
+  for (int i = 0; i < current_course_index; i++) {
+    struct Course *c = current_courses[i];
+    printf("{%d,%s,%d,%c}\n", c->id, c->title, c->year, c->semester);
+  }
 }
 
 int courses_to_csv(FILE *fh) {
@@ -99,7 +107,7 @@ struct Course *csv_to_course(char *line) {
 
   struct Course *c = malloc(sizeof(struct Course));
   c->id = atoi(fields[0]);
-  c->title = fields[1];
+  c->title = strdup(fields[1]);
   c->year = atoi(fields[2]);
   c->semester = fields[3][0];
 
@@ -127,7 +135,9 @@ int load_tables(const char *prefix) {
       if (i == 0) {
         struct Course *c = csv_to_course(tmp);
         current_courses[current_course_index] = c;
+        printf("Loaded course #%d from file\n", current_course_index);
         current_course_index++;
+        printf("current_course_index is now %d\n", current_course_index);
       }
       free(tmp);
     }
@@ -141,12 +151,14 @@ int load_tables(const char *prefix) {
 int add_course(int id, const char *title, int year, char semester) {
   struct Course *c = malloc(sizeof(struct Course));
   c->id = id;
-  c->title = title;
+  c->title = strdup(title);
   c->year = year;
   c->semester = semester;
 
   current_courses[current_course_index] = c;
+  printf("Added course #%d in memory\n", current_course_index);
   current_course_index++;
+  printf("current course index is now %d\n", current_course_index);
 
   return 0;
 }

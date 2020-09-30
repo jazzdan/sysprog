@@ -26,6 +26,8 @@ int main() {
     printf("Successfully added course\n");
   }
 
+  print_courses();
+
   if (save_tables("test") != 0) {
     printf("Failed to save tables\n");
     return EXIT_FAILURE;

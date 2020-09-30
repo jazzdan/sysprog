@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO try running leaks
 // TODO soft delete
 // TODO write test for adding course + then saving
 // TODO write test for deleting course + then saving
@@ -135,6 +134,19 @@ int load_tables(const char *prefix) {
 
     fclose(file_handle);
   }
+
+  return 0;
+}
+
+int add_course(int id, const char *title, int year, char semester) {
+  struct Course *c = malloc(sizeof(struct Course));
+  c->id = id;
+  c->title = title;
+  c->year = year;
+  c->semester = semester;
+
+  current_courses[current_course_index] = c;
+  current_course_index++;
 
   return 0;
 }

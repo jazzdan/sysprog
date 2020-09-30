@@ -19,6 +19,13 @@ int main() {
     printf("Successfully loaded tables\n");
   }
 
+  if (add_course(2, "hello", 1921, 'f') != 0) {
+    printf("Failed to add course\n");
+    return EXIT_FAILURE;
+  } else {
+    printf("Successfully added course\n");
+  }
+
   if (save_tables("test") != 0) {
     printf("Failed to save tables\n");
     return EXIT_FAILURE;

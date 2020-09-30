@@ -3,7 +3,6 @@
 #include <string.h>
 
 // TODO soft delete
-// TODO write test for adding course + then saving
 // TODO write test for deleting course + then saving
 // TODO handle growing the number of students instead of just allocating 1024
 

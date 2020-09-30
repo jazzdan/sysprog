@@ -26,6 +26,20 @@ int main() {
     printf("Successfully added course\n");
   }
 
+  if (add_course(3, "hello3", 1921, 'f') != 0) {
+    printf("Failed to add course\n");
+    return EXIT_FAILURE;
+  } else {
+    printf("Successfully added course\n");
+  }
+
+  if (delete_course(2) != 0) {
+    printf("Failed to delete course\n");
+    return EXIT_FAILURE;
+  } else {
+    printf("Successfully deleted course\n");
+  }
+
   print_courses();
 
   if (save_tables("test") != 0) {

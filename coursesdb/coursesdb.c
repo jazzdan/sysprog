@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,17 +14,20 @@ struct Course {
   char *title;
   int year;
   char semester;
+  bool deleted;
 };
 
 struct Student {
   int id;
   char *name;
   int enrollment_year;
+  bool deleted;
 };
 
 struct Enrollment {
   int student_id;
   int course_id;
+  bool deleted;
 };
 
 int current_course_index = 0;
@@ -42,6 +46,9 @@ int init_database() {
 }
 
 int course_to_csv(struct Course *c, FILE *fh) {
+  if (c->deleted) {
+    return 0;
+  }
   return fprintf(fh, "%d,%s,%d,%c\n", c->id, c->title, c->year, c->semester);
 }
 
@@ -49,7 +56,8 @@ void print_courses() {
   printf("We think there are %d courses\n", current_course_index);
   for (int i = 0; i < current_course_index; i++) {
     struct Course *c = current_courses[i];
-    printf("{%d,%s,%d,%c}\n", c->id, c->title, c->year, c->semester);
+    printf("{%d,%s,%d,%c,%d}\n", c->id, c->title, c->year, c->semester,
+           c->deleted);
   }
 }
 
@@ -109,6 +117,7 @@ struct Course *csv_to_course(char *line) {
   c->title = strdup(fields[1]);
   c->year = atoi(fields[2]);
   c->semester = fields[3][0];
+  c->deleted = false;
 
   return c;
 }
@@ -153,6 +162,7 @@ int add_course(int id, const char *title, int year, char semester) {
   c->title = strdup(title);
   c->year = year;
   c->semester = semester;
+  c->deleted = false;
 
   current_courses[current_course_index] = c;
   printf("Added course #%d in memory\n", current_course_index);
@@ -160,4 +170,16 @@ int add_course(int id, const char *title, int year, char semester) {
   printf("current course index is now %d\n", current_course_index);
 
   return 0;
+}
+
+int delete_course(int id) {
+  for (int i = 0; i < current_course_index; i++) {
+    struct Course *c = current_courses[i];
+    if (c->id == id && !c->deleted) {
+      c->deleted = true;
+      return 0;
+    }
+  }
+
+  return 1;
 }

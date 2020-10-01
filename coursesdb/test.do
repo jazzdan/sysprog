@@ -5,7 +5,7 @@ os.system("redo-ifchange all")
 
 def teardown():
     print(os.getcwd())
-    os.system("git checkout data/test-courses.csv data/test-students.csv")
+    os.system("git checkout data/test-courses.csv data/test-students.csv data/test-enrollment.csv")
 
 def fail(msg):
     print(msg)

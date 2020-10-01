@@ -40,6 +40,13 @@ int main() {
     printf("Successfully deleted course\n");
   }
 
+  if (add_student(2, "taro", 2010) != 0) {
+    printf("Failed to add student\n");
+    return EXIT_FAILURE;
+  } else {
+    printf("Successfully added student\n");
+  }
+
   print_courses();
   print_students();
 

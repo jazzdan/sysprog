@@ -227,3 +227,27 @@ int delete_course(int id) {
 
   return 1;
 }
+
+int add_student(int id, const char *name, int first_year) {
+  struct Student *s = malloc(sizeof(struct Course));
+  s->id = id;
+  s->name = strdup(name);
+  s->enrollment_year = first_year;
+
+  current_students[current_student_index] = s;
+  current_student_index++;
+
+  return 0;
+}
+
+int delete_student(int id) {
+  for (int i = 0; i < current_student_index; i++) {
+    struct Student *s = current_students[i];
+    if (s->id == id && !s->deleted) {
+      s->deleted = true;
+      return 0;
+    }
+  }
+
+  return 1;
+}

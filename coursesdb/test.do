@@ -5,7 +5,7 @@ os.system("redo-ifchange all")
 
 def teardown():
     print(os.getcwd())
-    os.system("git checkout data/test-courses.csv")
+    os.system("git checkout data/test-courses.csv data/test-students.csv")
 
 def fail(msg):
     print(msg)
@@ -28,5 +28,15 @@ actual_courses = courses_file.read()
 
 if actual_courses != expected_courses:
     fail("Expected course file to be:\n%s\nGot:\n%s" % (expected_courses, actual_courses))
+
+expected_students = """1,dan,2009
+"""
+
+students_file = open("data/test-students.csv", "r")
+actual_students = students_file.read()
+
+if actual_students != expected_students:
+    fail("Expected students file to be:\n%s\nGot:\n%s" % (expected_students, actual_students))
+
 
 teardown()

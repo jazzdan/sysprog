@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO soft delete
-// TODO write test for deleting course + then saving
 // TODO handle growing the number of students instead of just allocating 1024
 
 const char *types[3];
@@ -52,6 +50,14 @@ int course_to_csv(struct Course *c, FILE *fh) {
   return fprintf(fh, "%d,%s,%d,%c\n", c->id, c->title, c->year, c->semester);
 }
 
+int student_to_csv(struct Student *s, FILE *fh) {
+  if (s->deleted) {
+    return 0;
+  }
+
+  return fprintf(fh, "%d,%s,%d\n", s->id, s->name, s->enrollment_year);
+}
+
 void print_courses() {
   printf("We think there are %d courses\n", current_course_index);
   for (int i = 0; i < current_course_index; i++) {
@@ -61,9 +67,28 @@ void print_courses() {
   }
 }
 
+void print_students() {
+  printf("We think there are %d students\n", current_student_index);
+  for (int i = 0; i < current_student_index; i++) {
+    struct Student *s = current_students[i];
+    printf("{%d,%s,%d,%d}\n", s->id, s->name, s->enrollment_year, s->deleted);
+  }
+}
+
 int courses_to_csv(FILE *fh) {
   for (int i = 0; i < current_course_index; i++) {
     if (course_to_csv(current_courses[i], fh) < 0) {
+      printf("Failed to write to csv");
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+int students_to_csv(FILE *fh) {
+  for (int i = 0; i < current_student_index; i++) {
+    if (student_to_csv(current_students[i], fh) < 0) {
       printf("Failed to write to csv");
       return 1;
     }
@@ -89,6 +114,10 @@ int save_tables(const char *prefix) {
     if (i == 0) {
       if (courses_to_csv(file_handle) != 0) {
         return 103;
+      }
+    } else if (i == 1) {
+      if (students_to_csv(file_handle) != 0) {
+        return 104;
       }
     }
 
@@ -122,6 +151,17 @@ struct Course *csv_to_course(char *line) {
   return c;
 }
 
+struct Student *csv_to_student(char *line) {
+  char **fields = parse(line, ",");
+
+  struct Student *s = malloc(sizeof(struct Student));
+  s->id = atoi(fields[0]);
+  s->name = strdup(fields[1]);
+  s->enrollment_year = atoi(fields[2]);
+
+  return s;
+}
+
 int load_tables(const char *prefix) {
   for (int i = 0; i < 3; i++) {
     const char *type = types[i];
@@ -146,6 +186,10 @@ int load_tables(const char *prefix) {
         printf("Loaded course #%d from file\n", current_course_index);
         current_course_index++;
         printf("current_course_index is now %d\n", current_course_index);
+      } else if (i == 1) {
+        struct Student *s = csv_to_student(tmp);
+        current_students[current_student_index] = s;
+        current_student_index++;
       }
       free(tmp);
     }

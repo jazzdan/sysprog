@@ -41,6 +41,7 @@ int main() {
   }
 
   print_courses();
+  print_students();
 
   if (save_tables("test") != 0) {
     printf("Failed to save tables\n");

@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 import os
 
 os.system("redo-ifchange all")
@@ -18,7 +17,7 @@ def run():
 
 status = run()
 if status != 0:
-    fail()
+    fail("failed to run main")
 
 expected_courses = """1,test,1920,f
 3,hello3,1921,f

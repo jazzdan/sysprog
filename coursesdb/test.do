@@ -30,6 +30,7 @@ if actual_courses != expected_courses:
     fail("Expected course file to be:\n%s\nGot:\n%s" % (expected_courses, actual_courses))
 
 expected_students = """1,dan,2009
+2,taro,2010
 """
 
 students_file = open("data/test-students.csv", "r")

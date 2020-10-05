@@ -58,6 +58,14 @@ int student_to_csv(struct Student *s, FILE *fh) {
   return fprintf(fh, "%d,%s,%d\n", s->id, s->name, s->enrollment_year);
 }
 
+int enrollment_to_csv(struct Enrollment *e, FILE *fh) {
+  if (e->deleted) {
+    return 0;
+  }
+
+  return fprintf(fh, "%d,%d\n", e->student_id, e->course_id);
+}
+
 void print_courses() {
   printf("We think there are %d courses\n", current_course_index);
   for (int i = 0; i < current_course_index; i++) {
@@ -97,6 +105,17 @@ int students_to_csv(FILE *fh) {
   return 0;
 }
 
+int enrollments_to_csv(FILE *fh) {
+  for (int i = 0; i < current_enrollment_index; i++) {
+    if (enrollment_to_csv(current_enrollment[i], fh) < 0) {
+      printf("Failed to write to csv");
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
 int save_tables(const char *prefix) {
   for (int i = 0; i < 3; i++) {
     const char *type = types[i];
@@ -118,6 +137,10 @@ int save_tables(const char *prefix) {
     } else if (i == 1) {
       if (students_to_csv(file_handle) != 0) {
         return 104;
+      }
+    } else if (i == 2) {
+      if (enrollments_to_csv(file_handle) != 0) {
+        return 105;
       }
     }
 
@@ -250,4 +273,16 @@ int delete_student(int id) {
   }
 
   return 1;
+}
+
+int enroll_student(int student_id, int course_id) {
+  // TODO error handling if student or course doesn't exist
+  struct Enrollment *e = malloc(sizeof(struct Enrollment));
+  e->student_id = student_id;
+  e->course_id = course_id;
+
+  current_enrollment[current_student_index] = e;
+  current_enrollment_index++;
+
+  return 0;
 }

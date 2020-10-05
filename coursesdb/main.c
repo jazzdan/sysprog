@@ -50,6 +50,13 @@ int main() {
   print_courses();
   print_students();
 
+  if (enroll_student(1, 1) != 0) {
+    printf("Failed to enroll student\n");
+    return EXIT_FAILURE;
+  } else {
+    printf("Successfully enrolled student in course \n");
+  }
+
   if (save_tables("test") != 0) {
     printf("Failed to save tables\n");
     return EXIT_FAILURE;

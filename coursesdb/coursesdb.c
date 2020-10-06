@@ -185,6 +185,16 @@ struct Student *csv_to_student(char *line) {
   return s;
 }
 
+struct Enrollment *csv_to_enrollment(char *line) {
+  char **fields = parse(line, ",");
+
+  struct Enrollment *e = malloc(sizeof(struct Enrollment));
+  e->student_id = atoi(fields[0]);
+  e->course_id = atoi(fields[1]);
+
+  return e;
+}
+
 int load_tables(const char *prefix) {
   for (int i = 0; i < 3; i++) {
     const char *type = types[i];
@@ -213,6 +223,10 @@ int load_tables(const char *prefix) {
         struct Student *s = csv_to_student(tmp);
         current_students[current_student_index] = s;
         current_student_index++;
+      } else if (i == 2) {
+        struct Enrollment *e = csv_to_enrollment(tmp);
+        current_enrollment[current_enrollment_index] = e;
+        current_enrollment_index++;
       }
       free(tmp);
     }
@@ -286,4 +300,16 @@ int enroll_student(int student_id, int course_id) {
   current_enrollment_index++;
 
   return 0;
+}
+
+int cancel_enrollment(int student_id, int course_id) {
+  for (int i = 0; i < current_enrollment_index; i++) {
+    struct Enrollment *e = current_enrollment[i];
+    if (e->student_id == student_id && e->course_id == course_id) {
+      e->deleted = true;
+      return 0;
+    }
+  }
+
+  return 1;
 }

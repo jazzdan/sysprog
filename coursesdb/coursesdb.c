@@ -313,3 +313,31 @@ int cancel_enrollment(int student_id, int course_id) {
 
   return 1;
 }
+
+struct student_iterator {
+  int current_id;
+};
+
+extern struct student_iterator *next_student(struct student_iterator *i) {
+  if (i == NULL) {
+    struct student_iterator *si = malloc(sizeof(struct student_iterator));
+    si->current_id = 0;
+
+    return si;
+  }
+
+  int next_id = i->current_id + 1;
+  if (next_id > current_student_index) {
+    return i;
+  }
+
+  i->current_id = next_id;
+
+  return i;
+}
+
+extern const char *student_name(const struct student_iterator *i) {
+  struct Student *s = current_students[i->current_id];
+
+  return s->name;
+}

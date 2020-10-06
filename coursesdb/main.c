@@ -71,6 +71,11 @@ int main() {
     printf("Successfully cancelled enrollment\n");
   }
 
+  // Test student iterator
+  struct student_iterator *si = next_student(NULL);
+
+  printf("Student name: %s\n", student_name(si));
+
   if (save_tables("test") != 0) {
     printf("Failed to save tables\n");
     return EXIT_FAILURE;

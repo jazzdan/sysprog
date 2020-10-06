@@ -71,11 +71,21 @@ int main() {
     printf("Successfully cancelled enrollment\n");
   }
 
+  if (add_student(3, "steve", 2012) != 0) {
+    printf("Failed to add student\n");
+    return EXIT_FAILURE;
+  }
+
+  if (delete_student(2) != 0) {
+    printf("Failed to delete student\n");
+    return EXIT_FAILURE;
+  }
+
   // Test student iterator
   struct student_iterator *si = next_student(NULL);
   printf("Student name should be dan: %s\n", student_name(si));
   si = next_student(si);
-  printf("Student name should be taro: %s\n", student_name(si));
+  printf("Student name should be steve: %s\n", student_name(si));
   si = next_student(si);
   if (si != NULL) {
     printf(

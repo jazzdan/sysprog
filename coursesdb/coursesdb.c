@@ -280,8 +280,9 @@ int enroll_student(int student_id, int course_id) {
   struct Enrollment *e = malloc(sizeof(struct Enrollment));
   e->student_id = student_id;
   e->course_id = course_id;
+  e->deleted = false;
 
-  current_enrollment[current_student_index] = e;
+  current_enrollment[current_enrollment_index] = e;
   current_enrollment_index++;
 
   return 0;

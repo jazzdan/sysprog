@@ -73,13 +73,21 @@ int main() {
 
   // Test student iterator
   struct student_iterator *si = next_student(NULL);
-
-  printf("Student name: %s\n", student_name(si));
+  printf("Student name should be dan: %s\n", student_name(si));
+  si = next_student(si);
+  printf("Student name should be taro: %s\n", student_name(si));
+  si = next_student(si);
+  if (si != NULL) {
+    printf(
+        "Student iterator should return null once there are no more "
+        "students\n");
+    return EXIT_FAILURE;
+  }
 
   if (save_tables("test") != 0) {
     printf("Failed to save tables\n");
     return EXIT_FAILURE;
-  } else {
-    printf("Successfully saved tables\n");
-  }
+      } else {
+        printf("Successfully saved tables\n");
+      }
 }

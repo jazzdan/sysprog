@@ -323,15 +323,25 @@ extern struct student_iterator *next_student(struct student_iterator *i) {
     struct student_iterator *si = malloc(sizeof(struct student_iterator));
     si->current_id = 0;
 
+    struct Student *s = current_students[si->current_id];
+    if (s->deleted) {
+      return next_student(si);
+    }
+
     return si;
   }
 
   int next_id = i->current_id + 1;
-  if (next_id > current_student_index) {
-    return i;
+  if (next_id >= current_student_index) {
+    return NULL;
   }
 
   i->current_id = next_id;
+
+  struct Student *s = current_students[i->current_id];
+  if (s->deleted) {
+    return next_student(i);
+  }
 
   return i;
 }
